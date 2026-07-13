@@ -298,16 +298,27 @@
 
     let currentChild = 'aradhya';
     let currentDate = new Date();
-    let appData = {
-        activities: JSON.parse(localStorage.getItem('ld_activities')) || defaultActivities,
-        history: JSON.parse(localStorage.getItem('ld_history')) || {} 
-    };
+    let appData = {};
+
+    function initializeAppData() {
+        const storedActivities = localStorage.getItem('ld_activities');
+        const storedHistory = localStorage.getItem('ld_history');
+        
+        appData = {
+            activities: storedActivities ? JSON.parse(storedActivities) : JSON.parse(JSON.stringify(defaultActivities)),
+            history: storedHistory ? JSON.parse(storedHistory) : {}
+        };
+        
+        // Save to localStorage to ensure defaults are persisted
+        saveToLocalStorage();
+    }
 
     function getFormatDateKey(d) {
         return d.toISOString().split('T')[0];
     }
 
     function init() {
+        initializeAppData();
         renderDate();
         renderActivities();
         calculateStreak();
