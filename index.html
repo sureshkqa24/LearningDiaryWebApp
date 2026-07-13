@@ -194,6 +194,12 @@
             font-size: 1.2rem;
             cursor: pointer;
             padding: 5px 10px;
+            opacity: 1;
+        }
+
+        .date-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .date-display {
@@ -204,6 +210,12 @@
         .date-display .current-date {
             font-size: 1rem;
             color: #636e72;
+        }
+
+        .date-display .date-status {
+            font-size: 0.75rem;
+            color: #a29bfe;
+            margin-top: 3px;
         }
 
         /* Progress Chart */
@@ -523,6 +535,10 @@
             border-color: var(--success);
         }
 
+        .activity-item.view-only {
+            opacity: 0.7;
+        }
+
         .activity-header {
             display: flex;
             align-items: center;
@@ -571,6 +587,11 @@
             transform: scale(1.2);
         }
 
+        .activity-status.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .delete-btn {
             background: var(--danger);
             color: white;
@@ -591,6 +612,17 @@
         .empty-state-icon {
             font-size: 2rem;
             margin-bottom: 10px;
+        }
+
+        /* View Only Message */
+        .view-only-message {
+            background: #fffbf0;
+            border-left: 4px solid var(--warning);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #636e72;
         }
 
         /* Activity Note Modal */
@@ -812,14 +844,20 @@
 
         <!-- Date Navigator -->
         <div class="date-nav">
-            <button onclick="previousDay()">◀</button>
+            <button id="prev-btn" onclick="previousDay()">◀</button>
             <div class="date-display">
                 <div class="current-date" id="current-date-display">Today</div>
+                <div class="date-status" id="date-status"></div>
             </div>
-            <button onclick="nextDay()">▶</button>
+            <button id="next-btn" onclick="nextDay()" disabled>▶</button>
         </div>
 
-        <!-- Progress Chart (Last 7 Days) -->
+        <!-- View Only Message for Past Days -->
+        <div id="view-only-msg" class="view-only-message" style="display: none;">
+            👁️ You're viewing past progress. You can only complete activities for today.
+        </div>
+
+        <!-- Progress Chart -->
         <div class="progress-chart">
             <div class="chart-title">📊 7-Day Progress</div>
             <div class="chart-bars" id="chart-container"></div>
@@ -903,7 +941,7 @@
         <div class="activities-section">
             <div class="section-title">📋 Activities</div>
             
-            <div class="add-activity-form">
+            <div id="add-form-container" class="add-activity-form">
                 <div class="form-row">
                     <input type="text" id="new-activity-input" placeholder="Activity name...">
                     <select id="activity-category">
@@ -971,7 +1009,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'learning_diary_data_v3';
+    const STORAGE_KEY = 'learning_diary_data_v4';
     const POINTS_PER_ACTIVITY = 10;
 
     const DEFAULT_ACTIVITIES = [
@@ -1085,9 +1123,16 @@
         return date.toISOString().split('T')[0];
     }
 
+    function getTodayKey() {
+        return getDateKey(new Date());
+    }
+
+    function isToday(date) {
+        return getDateKey(date) === getTodayKey();
+    }
+
     function getDateDisplay(date) {
-        const today = new Date();
-        const todayKey = getDateKey(today);
+        const todayKey = getTodayKey();
         const dateKey = getDateKey(date);
         
         if (todayKey === dateKey) {
@@ -1096,6 +1141,14 @@
             return "Future";
         } else {
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+        }
+    }
+
+    function updateDateStatus() {
+        if (isToday(currentDate)) {
+            document.getElementById('date-status').textContent = '';
+        } else {
+            document.getElementById('date-status').textContent = '📖 View Only';
         }
     }
 
@@ -1111,17 +1164,38 @@
         
         if (currentDate < today) {
             currentDate.setDate(currentDate.getDate() + 1);
+            updateUI();
         }
-        updateUI();
+    }
+
+    function updateDateNavigation() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+
+        // Can always go to past
+        document.getElementById('prev-btn').disabled = false;
+
+        // Can only go forward if not at today
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(nextDate.getDate() + 1);
+        document.getElementById('next-btn').disabled = nextDate > today;
     }
 
     function updateUI() {
         document.getElementById('child-display').textContent = appData.childName || '---';
         document.getElementById('current-date-display').textContent = getDateDisplay(currentDate);
+        updateDateStatus();
+        updateDateNavigation();
         
         const todayKey = getDateKey(currentDate);
         const historyEntry = appData.history[todayKey] || { activities: [], points: 0 };
         appData.completedToday = historyEntry.activities;
+        
+        // Show/hide add form and view-only message
+        const isViewingToday = isToday(currentDate);
+        document.getElementById('add-form-container').style.display = isViewingToday ? 'flex' : 'none';
+        document.getElementById('view-only-msg').style.display = isViewingToday ? 'none' : 'block';
         
         updateStreakCounter();
         updateTotalPoints();
@@ -1159,7 +1233,7 @@
     }
 
     function updateTodayPoints() {
-        const todayKey = getDateKey(currentDate);
+        const todayKey = getTodayKey();
         const historyEntry = appData.history[todayKey] || { activities: [], points: 0 };
         document.getElementById('today-points-display').textContent = historyEntry.points;
         
@@ -1249,6 +1323,7 @@
         const todayKey = getDateKey(currentDate);
         const historyEntry = appData.history[todayKey] || { activities: [], points: 0 };
         const completedIds = new Set(historyEntry.activities);
+        const isViewingToday = isToday(currentDate);
         
         if (appData.activities.length === 0) {
             list.innerHTML = `
@@ -1263,8 +1338,9 @@
         list.innerHTML = appData.activities.map(activity => {
             const isCompleted = completedIds.has(activity.id);
             const note = activity.notes[todayKey] || '';
+            
             return `
-                <div class="activity-item ${isCompleted ? 'completed' : ''}">
+                <div class="activity-item ${isCompleted ? 'completed' : ''} ${!isViewingToday ? 'view-only' : ''}">
                     <div style="flex: 1;">
                         <div class="activity-header">
                             <div class="activity-name">${activity.name}</div>
@@ -1273,11 +1349,17 @@
                         ${note ? `<div class="activity-note">📝 ${note}</div>` : ''}
                     </div>
                     <div class="activity-actions">
-                        <div style="font-size: 0.8rem; cursor: pointer; color: #636e72;" onclick="openNoteModal(${activity.id}, '${activity.name}')" title="Add Note">📝</div>
-                        <div class="activity-status" onclick="toggleActivity(${activity.id})">
-                            ${isCompleted ? '✅' : '⭕️'}
-                        </div>
-                        <button class="delete-btn" onclick="deleteActivity(${activity.id})">Delete</button>
+                        ${isViewingToday ? `
+                            <div style="font-size: 0.8rem; cursor: pointer; color: #636e72;" onclick="openNoteModal(${activity.id}, '${activity.name}')" title="Add Note">📝</div>
+                            <div class="activity-status" onclick="toggleActivity(${activity.id})">
+                                ${isCompleted ? '✅' : '⭕️'}
+                            </div>
+                            <button class="delete-btn" onclick="deleteActivity(${activity.id})">Delete</button>
+                        ` : `
+                            <div class="activity-status disabled" title="View only - past day">
+                                ${isCompleted ? '✅' : '⭕️'}
+                            </div>
+                        `}
                     </div>
                 </div>
             `;
@@ -1285,6 +1367,8 @@
     }
 
     function openNoteModal(activityId, activityName) {
+        if (!isToday(currentDate)) return; // Prevent opening notes for past days
+        
         currentEditingActivityId = activityId;
         const todayKey = getDateKey(currentDate);
         const activity = appData.activities.find(a => a.id === activityId);
@@ -1301,7 +1385,7 @@
     }
 
     function saveActivityNote() {
-        if (!currentEditingActivityId) return;
+        if (!currentEditingActivityId || !isToday(currentDate)) return;
         
         const todayKey = getDateKey(currentDate);
         const activity = appData.activities.find(a => a.id === currentEditingActivityId);
@@ -1318,6 +1402,8 @@
     }
 
     function toggleActivity(activityId) {
+        if (!isToday(currentDate)) return; // Prevent toggling for past days
+        
         const todayKey = getDateKey(currentDate);
         
         if (!appData.history[todayKey]) {
@@ -1467,7 +1553,7 @@
     }
 
     function updateSummary() {
-        const todayKey = getDateKey(currentDate);
+        const todayKey = getTodayKey();
         const entry = appData.history[todayKey] || { activities: [], points: 0 };
         
         document.getElementById('total-activities').textContent = appData.activities.length;
