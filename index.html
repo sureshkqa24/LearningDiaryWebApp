@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Learning Diary</title>
+    <title>Learning Diary - Reward System</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,19 +14,26 @@
 
     <style>
         :root {
+            --primary: #6c5ce7;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #ff7675;
             --bg-primary: #f4f6f9;
-            --tab-aradhya: #ff7675;
-            --tab-shiv: #74b9ff;
             --text-dark: #2d3436;
             --card-bg: #ffffff;
             --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-dark);
-            margin: 0;
             padding: 10px;
             display: flex;
             justify-content: center;
@@ -40,474 +47,622 @@
             border-radius: var(--border-radius);
             box-shadow: 0 8px 24px rgba(0,0,0,0.05);
             padding: 20px;
-            box-sizing: border-box;
         }
 
-        .tabs {
+        /* Setup Screen */
+        .setup-screen {
             display: flex;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #dfe6e9;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            background: #dfe6e9;
-            color: #636e72;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn.active[data-child="aradhya"] { background: var(--tab-aradhya); color: white; }
-        .tab-btn.active[data-child="shiv"] { background: var(--tab-shiv); color: white; }
-
-        .date-navigator {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f1f2f6;
-            padding: 10px 15px;
-            border-radius: 30px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .date-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px 10px;
-        }
-
-        .stats-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            flex: 1;
-            background: #f9f9f9;
-            border: 1px solid #edf0f2;
-            padding: 12px;
-            border-radius: 12px;
+            flex-direction: column;
+            gap: 20px;
             text-align: center;
         }
 
-        .stat-val {
-            font-size: 1.4rem;
+        .setup-title {
+            font-size: 2rem;
             font-weight: bold;
-            margin-top: 4px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .setup-subtitle {
+            font-size: 0.95rem;
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            text-align: left;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* Main App */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #dfe6e9;
+        }
+
+        .child-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .reset-btn {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #dfe6e9;
+            color: var(--text-dark);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Points Display */
+        .points-section {
+            background: linear-gradient(135deg, var(--primary), #a29bfe);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .points-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .points-value {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .points-sublabel {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 5px;
+        }
+
+        /* Rewards Section */
+        .rewards-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #636e72;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .reward-card {
+            background: #f9f9f9;
+            border: 2px solid #edf0f2;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .reward-card.unlocked {
+            border-color: var(--success);
+            background: #f0fff4;
+            transform: scale(1.05);
+        }
+
+        .reward-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .reward-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .reward-points {
+            font-size: 0.8rem;
+            color: #636e72;
+        }
+
+        .reward-status {
+            font-size: 0.7rem;
+            margin-top: 6px;
+            color: var(--success);
+            font-weight: bold;
+            display: none;
+        }
+
+        .reward-card.unlocked .reward-status {
+            display: block;
+        }
+
+        /* Activities Section */
+        .activities-section {
+            margin-bottom: 25px;
+        }
+
+        .add-activity-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .add-activity-form input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #dfe6e9;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .add-activity-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .add-activity-form button {
+            padding: 10px 15px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .activities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .activity-item {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             background: #fff;
             border: 2px solid #edf0f2;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s ease, border-color 0.2s;
-        }
-
-        .activity-item:active { transform: scale(0.98); }
-        .activity-item.completed { border-color: #2ecc71; background: #f4fbf7; }
-
-        .stamp-indicator {
-            font-size: 1.5rem;
-            opacity: 0.3;
-        }
-
-        .completed .stamp-indicator {
-            opacity: 1;
-            animation: stamp-slam 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes stamp-slam {
-            0% { transform: scale(2.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .chart-box {
-            background: #f9f9f9;
-            border: 1px solid #edf0f2;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 25px;
-        }
-        .chart-title {
-            font-size: 0.9rem;
-            color: #636e72;
-            font-weight: 600;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        .bar-graph {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 100px;
-            padding: 0 10px;
-            gap: 4px;
-        }
-        .bar-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            min-width: 0;
-        }
-        .bar-pillar {
-            width: 100%;
-            background-color: #ddd;
-            border-radius: 4px 4px 0 0;
-            transition: height 0.3s ease, background-color 0.3s;
-            height: 0px;
-            min-height: 4px;
-        }
-        .bar-label {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-            margin-top: 6px;
-        }
-
-        .edit-section {
-            border-top: 1px dashed #ccc;
-            padding-top: 15px;
-            margin-top: 25px;
-        }
-
-        .edit-toggle-btn {
-            width: 100%;
-            background: #6c5ce7;
-            color: white;
-            border: none;
             padding: 12px;
             border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .edit-panel {
-            display: none;
-            margin-top: 15px;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 12px;
+        .activity-item:active {
+            transform: scale(0.98);
         }
 
-        .edit-input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+        .activity-item.completed {
+            background: #f0fff4;
+            border-color: var(--success);
         }
 
-        .edit-input-group input {
+        .activity-name {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+            font-weight: 500;
         }
 
-        .edit-input-group button {
-            background: #2ecc71;
+        .activity-completed .activity-name {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .activity-status {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .activity-status:active {
+            transform: scale(1.2);
+        }
+
+        .delete-btn {
+            background: var(--danger);
             color: white;
             border: none;
-            padding: 0 15px;
-            border-radius: 6px;
+            border-radius: 4px;
+            padding: 4px 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
-        .manage-item {
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #636e72;
+        }
+
+        .empty-state-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* Daily Summary */
+        .daily-summary {
+            background: #f9f9f9;
+            border: 1px solid #edf0f2;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #636e72;
+        }
+
+        .summary-stat {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf0f2;
         }
 
-        .del-btn {
-            background: #ff7675;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 5px 10px;
-            cursor: pointer;
+        .summary-stat:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #636e72;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: var(--primary);
         }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="tabs">
-        <button class="tab-btn active" data-child="aradhya" onclick="switchChild('aradhya')">Aradhya (7)</button>
-        <button class="tab-btn" data-child="shiv" onclick="switchChild('shiv')">Shiv (3)</button>
-    </div>
-
-    <div class="date-navigator">
-        <button class="date-btn" onclick="changeDate(-1)">◀</button>
-        <span id="current-date-display">Today</span>
-        <button class="date-btn" onclick="changeDate(1)">▶</button>
-    </div>
-
-    <div class="stats-row">
-        <div class="stat-card">
-            <div style="font-size: 0.8rem; color: #636e72;">Current Streak 🔥</div>
-            <div class="stat-val" id="streak-count">0 Days</div>
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="setup-screen">
+        <div class="setup-title">🎯 Learning Diary</div>
+        <div class="setup-subtitle">Track activities and earn rewards!</div>
+        
+        <div class="input-group">
+            <label for="child-name-input">Enter Child's Name</label>
+            <input type="text" id="child-name-input" placeholder="e.g., Arjun, Priya, Aditya...">
         </div>
-        <div class="stat-card">
-            <div style="font-size: 0.8rem; color: #636e72;">Task Score</div>
-            <div class="stat-val" id="completion-ratio">0/0</div>
+        
+        <button class="btn btn-primary" onclick="setupChild()">Start Tracking 🚀</button>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="main-screen" style="display: none;">
+        <div class="header">
+            <div class="child-name" id="child-display">---</div>
+            <button class="reset-btn" onclick="resetApp()">Change Name</button>
         </div>
-    </div>
 
-    <div class="activity-list" id="activities-container"></div>
+        <div class="points-section">
+            <div class="points-label">Total Points</div>
+            <div class="points-value" id="points-display">0</div>
+            <div class="points-sublabel">Keep completing activities to earn rewards!</div>
+        </div>
 
-    <div class="chart-box">
-        <div class="chart-title">Progress Last 7 Days</div>
-        <div class="bar-graph" id="bar-graph-container"></div>
-    </div>
-
-    <div class="edit-section">
-        <button class="edit-toggle-btn" onclick="toggleEditPanel()">⚙️ Edit Activities</button>
-        <div class="edit-panel" id="edit-panel">
-            <h4 style="margin-top: 0; margin-bottom: 10px;">Manage <span id="edit-child-name">Aradhya</span>'s List</h4>
-            <div class="edit-input-group">
-                <input type="text" id="new-activity-input" placeholder="Add new task...">
-                <button onclick="addNewActivity()">Add</button>
+        <!-- Rewards Section -->
+        <div class="rewards-section">
+            <div class="section-title">🎁 Rewards</div>
+            <div class="rewards-grid">
+                <div class="reward-card" id="reward-1">
+                    <div class="reward-icon">🍫</div>
+                    <div class="reward-name">Chocolate</div>
+                    <div class="reward-points">50 pts</div>
+                    <div class="reward-status">✓ Unlocked!</div>
+                </div>
+                <div class="reward-card" id="reward-2">
+                    <div class="reward-icon">🍦</div>
+                    <div class="reward-name">Ice Cream</div>
+                    <div class="reward-points">100 pts</div>
+                    <div class="reward-status">✓ Unlocked!</div>
+                </div>
+                <div class="reward-card" id="reward-3">
+                    <div class="reward-icon">🎉</div>
+                    <div class="reward-name">Weekend Out</div>
+                    <div class="reward-points">150 pts</div>
+                    <div class="reward-status">✓ Unlocked!</div>
+                </div>
             </div>
-            <div id="manage-list-container"></div>
+        </div>
+
+        <!-- Activities Section -->
+        <div class="activities-section">
+            <div class="section-title">📋 Activities</div>
+            
+            <div class="add-activity-form">
+                <input type="text" id="new-activity-input" placeholder="Add a new activity...">
+                <button onclick="addActivity()">Add</button>
+            </div>
+
+            <div class="activities-list" id="activities-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div>No activities yet. Add one to get started!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Summary -->
+        <div class="daily-summary">
+            <div class="summary-title">📊 Today's Summary</div>
+            <div class="summary-stat">
+                <div class="summary-label">Total Activities</div>
+                <div class="summary-value" id="total-activities">0</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-label">Completed Today</div>
+                <div class="summary-value" id="completed-activities">0</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-label">Today's Points Earned</div>
+                <div class="summary-value" id="today-points">0</div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    let defaultActivities = {
-        aradhya: ["Reading Books 📚", "Writing Letters ✍️", "Counting Math 🔢", "Drawing & Sketching 🎨"],
-        shiv: ["Learning Colours 🔴", "ABCs Practice 🔤", "Story Time 📖", "Building Blocks 🧱"]
+    const STORAGE_KEY = 'learning_diary_data';
+    const POINTS_PER_ACTIVITY = 10;
+
+    const REWARDS = [
+        { id: 1, name: 'Chocolate', icon: '🍫', points: 50 },
+        { id: 2, name: 'Ice Cream', icon: '🍦', points: 100 },
+        { id: 3, name: 'Weekend Out', icon: '🎉', points: 150 }
+    ];
+
+    let appData = {
+        childName: null,
+        activities: [],
+        completedToday: [],
+        totalPoints: 0,
+        history: {} // Store completion history by date
     };
 
-    let currentChild = 'aradhya';
-    let currentDate = new Date();
-    let appData = {};
-
-    function initializeAppData() {
-        const storedActivities = localStorage.getItem('ld_activities');
-        const storedHistory = localStorage.getItem('ld_history');
-        
-        appData = {
-            activities: storedActivities ? JSON.parse(storedActivities) : JSON.parse(JSON.stringify(defaultActivities)),
-            history: storedHistory ? JSON.parse(storedHistory) : {}
-        };
-        
-        // Save to localStorage to ensure defaults are persisted
-        saveToLocalStorage();
-    }
-
-    function getFormatDateKey(d) {
-        return d.toISOString().split('T')[0];
-    }
-
     function init() {
-        initializeAppData();
-        renderDate();
-        renderActivities();
-        calculateStreak();
-        renderChart();
-    }
-
-    function switchChild(child) {
-        currentChild = child;
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`.tab-btn[data-child="${child}"]`).classList.add('active');
-        document.getElementById('edit-panel').style.display = 'none';
-        renderActivities();
-        calculateStreak();
-        renderChart();
-    }
-
-    function renderDate() {
-        const todayStr = getFormatDateKey(new Date());
-        const activeStr = getFormatDateKey(currentDate);
-        if (todayStr === activeStr) {
-            document.getElementById('current-date-display').innerText = "⭐️ Today ⭐️";
+        loadData();
+        if (appData.childName) {
+            showMainScreen();
         } else {
-            document.getElementById('current-date-display').innerText = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+            showSetupScreen();
         }
     }
 
-    function changeDate(days) {
-        currentDate.setDate(currentDate.getDate() + days);
-        renderDate();
+    function loadData() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            appData = JSON.parse(saved);
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+
+    function showSetupScreen() {
+        document.getElementById('setup-screen').style.display = 'flex';
+        document.getElementById('main-screen').style.display = 'none';
+    }
+
+    function showMainScreen() {
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('main-screen').style.display = 'block';
+        updateUI();
+    }
+
+    function setupChild() {
+        const nameInput = document.getElementById('child-name-input');
+        const name = nameInput.value.trim();
+        
+        if (!name) {
+            alert('Please enter a name!');
+            return;
+        }
+
+        appData.childName = name;
+        appData.activities = [];
+        appData.completedToday = [];
+        appData.totalPoints = 0;
+        appData.history = {};
+        
+        saveData();
+        showMainScreen();
+    }
+
+    function resetApp() {
+        if (confirm('Are you sure you want to change the child? All progress will be reset.')) {
+            appData = {
+                childName: null,
+                activities: [],
+                completedToday: [],
+                totalPoints: 0,
+                history: {}
+            };
+            saveData();
+            showSetupScreen();
+            document.getElementById('child-name-input').value = '';
+        }
+    }
+
+    function updateUI() {
+        // Update child name
+        document.getElementById('child-display').textContent = appData.childName || '---';
+        
+        // Update points
+        document.getElementById('points-display').textContent = appData.totalPoints;
+        
+        // Update rewards
+        REWARDS.forEach(reward => {
+            const element = document.getElementById(`reward-${reward.id}`);
+            if (appData.totalPoints >= reward.points) {
+                element.classList.add('unlocked');
+            } else {
+                element.classList.remove('unlocked');
+            }
+        });
+
+        // Update activities list
         renderActivities();
+        
+        // Update summary
+        updateSummary();
+    }
+
+    function addActivity() {
+        const input = document.getElementById('new-activity-input');
+        const activityName = input.value.trim();
+
+        if (!activityName) {
+            alert('Please enter an activity name!');
+            return;
+        }
+
+        appData.activities.push({
+            id: Date.now(),
+            name: activityName,
+            completed: false
+        });
+
+        input.value = '';
+        saveData();
+        updateUI();
     }
 
     function renderActivities() {
-        const container = document.getElementById('activities-container');
-        container.innerHTML = '';
-        const dateKey = getFormatDateKey(currentDate);
-        const childList = appData.activities[currentChild] || [];
+        const list = document.getElementById('activities-list');
         
-        if(!appData.history[dateKey]) appData.history[dateKey] = {};
-        if(!appData.history[dateKey][currentChild]) appData.history[dateKey][currentChild] = [];
-
-        let completedItems = appData.history[dateKey][currentChild];
-        let doneCount = 0;
-
-        childList.forEach(act => {
-            const isDone = completedItems.includes(act);
-            if(isDone) doneCount++;
-
-            const div = document.createElement('div');
-            div.className = `activity-item ${isDone ? 'completed' : ''}`;
-            div.onclick = () => toggleActivityComplete(act);
-            div.innerHTML = `<span>${act}</span><span class="stamp-indicator">${isDone ? '✅' : '⭕️'}</span>`;
-            container.appendChild(div);
-        });
-
-        document.getElementById('completion-ratio').innerText = `${doneCount}/${childList.length}`;
-    }
-
-    function toggleActivityComplete(activityText) {
-        const dateKey = getFormatDateKey(currentDate);
-        let completedItems = appData.history[dateKey][currentChild];
-        const idx = completedItems.indexOf(activityText);
-        
-        if(idx > -1) completedItems.splice(idx, 1);
-        else completedItems.push(activityText);
-        
-        saveToLocalStorage();
-        renderActivities();
-        calculateStreak();
-        renderChart();
-    }
-
-    function calculateStreak() {
-        let streak = 0;
-        let checkDate = new Date();
-        while (true) {
-            const dateKey = getFormatDateKey(checkDate);
-            const childTasks = appData.activities[currentChild] || [];
-            if(childTasks.length === 0) break;
-            const logs = appData.history[dateKey]?.[currentChild] || [];
-            const allDone = childTasks.every(t => logs.includes(t));
-            
-            if (allDone && childTasks.length > 0) {
-                streak++;
-                checkDate.setDate(checkDate.getDate() - 1);
-            } else {
-                if(dateKey === getFormatDateKey(new Date())) {
-                    checkDate.setDate(checkDate.getDate() - 1);
-                    continue;
-                }
-                break;
-            }
-        }
-        document.getElementById('streak-count').innerText = `${streak} Day${streak !== 1 ? 's' : ''}`;
-    }
-
-    function renderChart() {
-        const container = document.getElementById('bar-graph-container');
-        container.innerHTML = '';
-        const themeColor = currentChild === 'aradhya' ? 'var(--tab-aradhya)' : 'var(--tab-shiv)';
-
-        // Collect all data for the 7 days to find max percentage for scaling
-        let chartData = [];
-        let maxPercentage = 0;
-
-        for(let i = 6; i >= 0; i--) {
-            let d = new Date();
-            d.setDate(d.getDate() - i);
-            const key = getFormatDateKey(d);
-            const completedCount = appData.history[key]?.[currentChild]?.length || 0;
-            const totalTasks = appData.activities[currentChild]?.length || 0;
-            
-            // Calculate percentage based on current task count, not historical
-            let percentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
-            
-            chartData.push({
-                date: d,
-                percentage: percentage,
-                dayLabel: d.toLocaleDateString('en-US', { weekday: 'narrow' })
-            });
-            
-            maxPercentage = Math.max(maxPercentage, percentage);
-        }
-
-        // Render bars with proportional scaling
-        chartData.forEach(data => {
-            const barHeight = maxPercentage > 0 ? (data.percentage / 100) * 100 : 0;
-            
-            const col = document.createElement('div');
-            col.className = 'bar-col';
-            col.innerHTML = `
-                <div class="bar-pillar" style="height: ${barHeight}px; background-color: ${data.percentage > 0 ? themeColor : '#ddd'}"></div>
-                <div class="bar-label">${data.dayLabel}</div>
+        if (appData.activities.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div>No activities yet. Add one to get started!</div>
+                </div>
             `;
-            container.appendChild(col);
-        });
+            return;
+        }
+
+        list.innerHTML = appData.activities.map(activity => `
+            <div class="activity-item ${activity.completed ? 'completed' : ''}">
+                <div class="activity-name">${activity.name}</div>
+                <div class="activity-actions">
+                    <div class="activity-status" onclick="toggleActivity(${activity.id})">
+                        ${activity.completed ? '✅' : '⭕️'}
+                    </div>
+                    <button class="delete-btn" onclick="deleteActivity(${activity.id})">Delete</button>
+                </div>
+            </div>
+        `).join('');
     }
 
-    function toggleEditPanel() {
-        const panel = document.getElementById('edit-panel');
-        if(panel.style.display === 'none' || !panel.style.display) {
-            panel.style.display = 'block';
-            document.getElementById('edit-child-name').innerText = currentChild.charAt(0).toUpperCase() + currentChild.slice(1);
-            renderManageList();
+    function toggleActivity(activityId) {
+        const activity = appData.activities.find(a => a.id === activityId);
+        if (!activity) return;
+
+        if (!activity.completed) {
+            // Mark as completed
+            activity.completed = true;
+            appData.completedToday.push(activityId);
+            appData.totalPoints += POINTS_PER_ACTIVITY;
         } else {
-            panel.style.display = 'none';
+            // Mark as incomplete
+            activity.completed = false;
+            appData.completedToday = appData.completedToday.filter(id => id !== activityId);
+            appData.totalPoints = Math.max(0, appData.totalPoints - POINTS_PER_ACTIVITY);
+        }
+
+        saveData();
+        updateUI();
+    }
+
+    function deleteActivity(activityId) {
+        if (confirm('Delete this activity?')) {
+            const activity = appData.activities.find(a => a.id === activityId);
+            
+            // If activity was completed, subtract points
+            if (activity && activity.completed) {
+                appData.totalPoints = Math.max(0, appData.totalPoints - POINTS_PER_ACTIVITY);
+                appData.completedToday = appData.completedToday.filter(id => id !== activityId);
+            }
+
+            appData.activities = appData.activities.filter(a => a.id !== activityId);
+            saveData();
+            updateUI();
         }
     }
 
-    function renderManageList() {
-        const listContainer = document.getElementById('manage-list-container');
-        listContainer.innerHTML = '';
-        (appData.activities[currentChild] || []).forEach((act, index) => {
-            const row = document.createElement('div');
-            row.className = 'manage-item';
-            row.innerHTML = `<span>${act}</span><button class="del-btn" onclick="removeActivity(${index})">Delete</button>`;
-            listContainer.appendChild(row);
-        });
-    }
+    function updateSummary() {
+        const today = new Date().toISOString().split('T')[0];
+        const completedCount = appData.activities.filter(a => a.completed).length;
+        const todayPoints = completedCount * POINTS_PER_ACTIVITY;
 
-    function addNewActivity() {
-        const input = document.getElementById('new-activity-input');
-        const text = input.value.trim();
-        if(text) {
-            appData.activities[currentChild].push(text);
-            input.value = '';
-            saveToLocalStorage();
-            renderManageList();
-            renderActivities();
-            calculateStreak();
-            renderChart();
-        }
-    }
-
-    function removeActivity(index) {
-        appData.activities[currentChild].splice(index, 1);
-        saveToLocalStorage();
-        renderManageList();
-        renderActivities();
-        calculateStreak();
-        renderChart();
-    }
-
-    function saveToLocalStorage() {
-        localStorage.setItem('ld_activities', JSON.stringify(appData.activities));
-        localStorage.setItem('ld_history', JSON.stringify(appData.history));
+        document.getElementById('total-activities').textContent = appData.activities.length;
+        document.getElementById('completed-activities').textContent = completedCount;
+        document.getElementById('today-points').textContent = todayPoints;
     }
 
     window.onload = init;
