@@ -206,6 +206,86 @@
             color: #636e72;
         }
 
+        /* Progress Chart */
+        .progress-chart {
+            background: #f9f9f9;
+            border: 1px solid #edf0f2;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #636e72;
+            margin-bottom: 12px;
+        }
+
+        .chart-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 80px;
+            gap: 6px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bar-column {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            min-height: 4px;
+        }
+
+        .bar-column.active {
+            background: var(--primary);
+        }
+
+        .bar-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        /* Weekly Stats */
+        .weekly-stats {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .weekly-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .weekly-stat:last-child {
+            border-bottom: none;
+        }
+
+        .weekly-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .weekly-stat-value {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
         /* Points Display */
         .points-section {
             background: linear-gradient(135deg, var(--primary), #a29bfe);
@@ -262,6 +342,7 @@
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
 
         .reward-card.unlocked {
@@ -291,6 +372,14 @@
             font-size: 0.8rem;
             color: #636e72;
             margin-bottom: 6px;
+        }
+
+        .reward-countdown {
+            font-size: 0.7rem;
+            color: var(--warning);
+            font-weight: 600;
+            margin-bottom: 4px;
+            min-height: 16px;
         }
 
         .reward-status {
@@ -326,6 +415,46 @@
             display: block;
         }
 
+        /* Badges Section */
+        .badges-section {
+            margin-bottom: 25px;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .badge-card {
+            background: #f9f9f9;
+            border: 2px solid #edf0f2;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .badge-card.earned {
+            opacity: 1;
+            filter: grayscale(0%);
+            border-color: var(--warning);
+            background: #fffbf0;
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .badge-name {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #636e72;
+        }
+
         /* Activities Section */
         .activities-section {
             margin-bottom: 25px;
@@ -333,11 +462,18 @@
 
         .add-activity-form {
             display: flex;
+            flex-direction: column;
             gap: 8px;
             margin-bottom: 15px;
         }
 
-        .add-activity-form input {
+        .form-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .add-activity-form input,
+        .add-activity-form select {
             flex: 1;
             padding: 10px;
             border: 2px solid #dfe6e9;
@@ -345,7 +481,8 @@
             font-size: 0.95rem;
         }
 
-        .add-activity-form input:focus {
+        .add-activity-form input:focus,
+        .add-activity-form select:focus {
             outline: none;
             border-color: var(--primary);
         }
@@ -386,6 +523,13 @@
             border-color: var(--success);
         }
 
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
         .activity-name {
             flex: 1;
             font-weight: 500;
@@ -394,6 +538,21 @@
         .activity-item.completed .activity-name {
             text-decoration: line-through;
             opacity: 0.6;
+        }
+
+        .activity-category {
+            background: var(--primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .activity-note {
+            font-size: 0.8rem;
+            color: #636e72;
+            margin-top: 4px;
         }
 
         .activity-actions {
@@ -434,91 +593,7 @@
             margin-bottom: 10px;
         }
 
-        /* Progress Chart */
-        .progress-chart {
-            background: #f9f9f9;
-            border: 1px solid #edf0f2;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .chart-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #636e72;
-            margin-bottom: 12px;
-        }
-
-        .chart-bars {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 80px;
-            gap: 6px;
-        }
-
-        .chart-bar {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .bar-column {
-            width: 100%;
-            background-color: #ddd;
-            border-radius: 4px 4px 0 0;
-            transition: all 0.3s ease;
-            min-height: 4px;
-        }
-
-        .bar-column.active {
-            background: var(--primary);
-        }
-
-        .bar-label {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-            font-weight: 500;
-        }
-
-        /* Daily Summary */
-        .daily-summary {
-            background: #f9f9f9;
-            border: 1px solid #edf0f2;
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .summary-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #636e72;
-        }
-
-        .summary-stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #edf0f2;
-        }
-
-        .summary-stat:last-child {
-            border-bottom: none;
-        }
-
-        .summary-label {
-            color: #636e72;
-        }
-
-        .summary-value {
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        /* Reward History Modal */
+        /* Activity Note Modal */
         .modal {
             display: none;
             position: fixed;
@@ -532,22 +607,30 @@
 
         .modal.show {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
         }
 
         .modal-content {
             background-color: var(--card-bg);
             padding: 25px;
-            border-radius: 12px;
-            max-width: 400px;
+            border-radius: 12px 12px 0 0;
+            max-width: 480px;
             width: 90%;
-            max-height: 70vh;
-            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 15px;
             color: var(--primary);
@@ -563,6 +646,53 @@
 
         .modal-close:hover {
             color: var(--danger);
+        }
+
+        .note-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dfe6e9;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .note-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-actions .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-actions .btn-cancel {
+            background: #dfe6e9;
+            color: var(--text-dark);
+        }
+
+        /* Reward History Modal */
+        .history-modal {
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .claimed-reward {
@@ -608,11 +738,38 @@
             color: #636e72;
         }
 
-        .countdown {
-            font-size: 0.75rem;
-            color: var(--warning);
+        /* Daily Summary */
+        .daily-summary {
+            background: #f9f9f9;
+            border: 1px solid #edf0f2;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .summary-title {
             font-weight: 600;
-            margin-top: 4px;
+            margin-bottom: 10px;
+            color: #636e72;
+        }
+
+        .summary-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf0f2;
+        }
+
+        .summary-stat:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #636e72;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: var(--primary);
         }
     </style>
 </head>
@@ -668,11 +825,27 @@
             <div class="chart-bars" id="chart-container"></div>
         </div>
 
+        <!-- Weekly Stats -->
+        <div class="weekly-stats">
+            <div class="weekly-stat">
+                <div class="weekly-stat-label">📈 This Week's Completion</div>
+                <div class="weekly-stat-value" id="weekly-completion">0%</div>
+            </div>
+            <div class="weekly-stat">
+                <div class="weekly-stat-label">🎯 Total This Week</div>
+                <div class="weekly-stat-value" id="weekly-points">0 pts</div>
+            </div>
+            <div class="weekly-stat">
+                <div class="weekly-stat-label">📝 Activities Logged</div>
+                <div class="weekly-stat-value" id="weekly-logged">0</div>
+            </div>
+        </div>
+
         <!-- Points Display -->
         <div class="points-section">
             <div class="points-label">Today's Points</div>
             <div class="points-value" id="today-points-display">0</div>
-            <div class="points-sublabel">Keep completing activities to earn rewards!</div>
+            <div class="points-sublabel" id="next-reward-hint">Keep completing activities to earn rewards!</div>
         </div>
 
         <!-- Rewards Section -->
@@ -683,7 +856,7 @@
                     <div class="reward-icon">🍫</div>
                     <div class="reward-name">Chocolate</div>
                     <div class="reward-points">50 pts</div>
-                    <div class="countdown" id="countdown-1"></div>
+                    <div class="reward-countdown" id="countdown-1"></div>
                     <div class="reward-status">✓ Unlocked!</div>
                     <button class="claim-btn" onclick="claimReward(1)">Claim</button>
                 </div>
@@ -691,7 +864,7 @@
                     <div class="reward-icon">🍦</div>
                     <div class="reward-name">Ice Cream</div>
                     <div class="reward-points">100 pts</div>
-                    <div class="countdown" id="countdown-2"></div>
+                    <div class="reward-countdown" id="countdown-2"></div>
                     <div class="reward-status">✓ Unlocked!</div>
                     <button class="claim-btn" onclick="claimReward(2)">Claim</button>
                 </div>
@@ -699,12 +872,31 @@
                     <div class="reward-icon">🎉</div>
                     <div class="reward-name">Weekend Out</div>
                     <div class="reward-points">150 pts</div>
-                    <div class="countdown" id="countdown-3"></div>
+                    <div class="reward-countdown" id="countdown-3"></div>
                     <div class="reward-status">✓ Unlocked!</div>
                     <button class="claim-btn" onclick="claimReward(3)">Claim</button>
                 </div>
             </div>
-            <button class="btn btn-primary" style="width: 100%; background: #a29bfe;" onclick="viewRewardHistory()">📜 View Reward History</button>
+            <button class="btn btn-primary" style="width: 100%; background: #a29bfe; margin-bottom: 10px;" onclick="viewRewardHistory()">📜 View Reward History</button>
+        </div>
+
+        <!-- Badges Section -->
+        <div class="badges-section">
+            <div class="section-title">🏆 Badges & Achievements</div>
+            <div class="badges-grid">
+                <div class="badge-card" id="badge-1">
+                    <div class="badge-icon">🔥</div>
+                    <div class="badge-name">5-Day Streak</div>
+                </div>
+                <div class="badge-card" id="badge-2">
+                    <div class="badge-icon">⭐</div>
+                    <div class="badge-name">100 Points</div>
+                </div>
+                <div class="badge-card" id="badge-3">
+                    <div class="badge-icon">🎯</div>
+                    <div class="badge-name">Perfect Week</div>
+                </div>
+            </div>
         </div>
 
         <!-- Activities Section -->
@@ -712,8 +904,16 @@
             <div class="section-title">📋 Activities</div>
             
             <div class="add-activity-form">
-                <input type="text" id="new-activity-input" placeholder="Add a new activity...">
-                <button onclick="addActivity()">Add</button>
+                <div class="form-row">
+                    <input type="text" id="new-activity-input" placeholder="Activity name...">
+                    <select id="activity-category">
+                        <option value="Academic">Academic</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Health">Health</option>
+                        <option value="Chores">Chores</option>
+                    </select>
+                </div>
+                <button onclick="addActivity()">Add Activity</button>
             </div>
 
             <div class="activities-list" id="activities-list">
@@ -743,9 +943,25 @@
     </div>
 </div>
 
+<!-- Activity Note Modal -->
+<div id="note-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-close" onclick="closeNoteModal()">&times;</span>
+            📝 Activity Note
+        </div>
+        <div style="margin-bottom: 15px; color: #636e72;" id="activity-note-title"></div>
+        <textarea id="activity-note-textarea" class="note-textarea" placeholder="What did you do? (e.g., 'Read Harry Potter Chapter 5')"></textarea>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeNoteModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveActivityNote()">Save Note</button>
+        </div>
+    </div>
+</div>
+
 <!-- Reward History Modal -->
 <div id="reward-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content history-modal">
         <div class="modal-header">
             <span class="modal-close" onclick="closeRewardHistory()">&times;</span>
             📜 Reward History
@@ -755,14 +971,14 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'learning_diary_data_v2';
+    const STORAGE_KEY = 'learning_diary_data_v3';
     const POINTS_PER_ACTIVITY = 10;
 
     const DEFAULT_ACTIVITIES = [
-        '📚 Reading a Book',
-        '✍️ Writing a Paragraph',
-        '🏃 Exercise for 30 mins',
-        '👨‍👩‍👧 Helping Parents in Daily Routine'
+        { name: '📚 Reading a Book', category: 'Academic' },
+        { name: '✍️ Writing a Paragraph', category: 'Academic' },
+        { name: '🏃 Exercise for 30 mins', category: 'Sports' },
+        { name: '👨‍👩‍👧 Helping Parents in Daily Routine', category: 'Chores' }
     ];
 
     const REWARDS = [
@@ -771,16 +987,24 @@
         { id: 3, name: 'Weekend Out', icon: '🎉', points: 150 }
     ];
 
+    const BADGES = [
+        { id: 1, name: '5-Day Streak', icon: '🔥', condition: () => appData.currentStreak >= 5 },
+        { id: 2, name: '100 Points', icon: '⭐', condition: () => appData.totalPoints >= 100 },
+        { id: 3, name: 'Perfect Week', icon: '🎯', condition: () => getWeeklyCompletion() === 100 }
+    ];
+
     let appData = {
         childName: null,
         activities: [],
         completedToday: [],
         totalPoints: 0,
-        history: {}, // {date: {activities: [], points: 0}}
-        claimedRewards: [] // [{id, name, date, points}]
+        history: {},
+        claimedRewards: [],
+        currentStreak: 0
     };
 
     let currentDate = new Date();
+    let currentEditingActivityId = null;
 
     function init() {
         loadData();
@@ -823,14 +1047,17 @@
         }
 
         appData.childName = name;
-        appData.activities = DEFAULT_ACTIVITIES.map((activityName, index) => ({
+        appData.activities = DEFAULT_ACTIVITIES.map((activity, index) => ({
             id: index + 1,
-            name: activityName,
+            name: activity.name,
+            category: activity.category,
+            notes: {}
         }));
         appData.completedToday = [];
         appData.totalPoints = 0;
         appData.history = {};
         appData.claimedRewards = [];
+        appData.currentStreak = 0;
         
         saveData();
         showMainScreen();
@@ -844,7 +1071,8 @@
                 completedToday: [],
                 totalPoints: 0,
                 history: {},
-                claimedRewards: []
+                claimedRewards: [],
+                currentStreak: 0
             };
             currentDate = new Date();
             saveData();
@@ -898,8 +1126,10 @@
         updateStreakCounter();
         updateTotalPoints();
         updateTodayPoints();
+        updateWeeklyStats();
         renderActivities();
         updateRewards();
+        updateBadges();
         renderProgressChart();
         updateSummary();
     }
@@ -920,6 +1150,7 @@
             checkDate.setDate(checkDate.getDate() - 1);
         }
         
+        appData.currentStreak = streak;
         document.getElementById('streak-display').textContent = streak;
     }
 
@@ -931,10 +1162,69 @@
         const todayKey = getDateKey(currentDate);
         const historyEntry = appData.history[todayKey] || { activities: [], points: 0 };
         document.getElementById('today-points-display').textContent = historyEntry.points;
+        
+        // Update hint
+        const REWARDS_SORTED = REWARDS.sort((a, b) => a.points - b.points);
+        const nextReward = REWARDS_SORTED.find(r => r.points > appData.totalPoints);
+        if (nextReward) {
+            const pointsNeeded = nextReward.points - appData.totalPoints;
+            document.getElementById('next-reward-hint').textContent = `${pointsNeeded} more points to ${nextReward.icon} ${nextReward.name}!`;
+        } else {
+            document.getElementById('next-reward-hint').textContent = 'You\'ve unlocked all rewards! 🎉';
+        }
+    }
+
+    function getWeeklyCompletion() {
+        let completedDays = 0;
+        for (let i = 0; i < 7; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateKey = getDateKey(date);
+            const entry = appData.history[dateKey];
+            if (entry && entry.activities.length === appData.activities.length) {
+                completedDays++;
+            }
+        }
+        return Math.round((completedDays / 7) * 100);
+    }
+
+    function getWeeklyPoints() {
+        let weeklyPoints = 0;
+        for (let i = 0; i < 7; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateKey = getDateKey(date);
+            const entry = appData.history[dateKey];
+            if (entry) {
+                weeklyPoints += entry.points;
+            }
+        }
+        return weeklyPoints;
+    }
+
+    function getWeeklyLogged() {
+        let weeklyLogged = 0;
+        for (let i = 0; i < 7; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateKey = getDateKey(date);
+            const entry = appData.history[dateKey];
+            if (entry) {
+                weeklyLogged += entry.activities.length;
+            }
+        }
+        return weeklyLogged;
+    }
+
+    function updateWeeklyStats() {
+        document.getElementById('weekly-completion').textContent = getWeeklyCompletion() + '%';
+        document.getElementById('weekly-points').textContent = getWeeklyPoints() + ' pts';
+        document.getElementById('weekly-logged').textContent = getWeeklyLogged();
     }
 
     function addActivity() {
         const input = document.getElementById('new-activity-input');
+        const category = document.getElementById('activity-category').value;
         const activityName = input.value.trim();
 
         if (!activityName) {
@@ -945,6 +1235,8 @@
         appData.activities.push({
             id: Date.now(),
             name: activityName,
+            category: category,
+            notes: {}
         });
 
         input.value = '';
@@ -970,10 +1262,18 @@
 
         list.innerHTML = appData.activities.map(activity => {
             const isCompleted = completedIds.has(activity.id);
+            const note = activity.notes[todayKey] || '';
             return `
                 <div class="activity-item ${isCompleted ? 'completed' : ''}">
-                    <div class="activity-name">${activity.name}</div>
+                    <div style="flex: 1;">
+                        <div class="activity-header">
+                            <div class="activity-name">${activity.name}</div>
+                            <div class="activity-category">${activity.category}</div>
+                        </div>
+                        ${note ? `<div class="activity-note">📝 ${note}</div>` : ''}
+                    </div>
                     <div class="activity-actions">
+                        <div style="font-size: 0.8rem; cursor: pointer; color: #636e72;" onclick="openNoteModal(${activity.id}, '${activity.name}')" title="Add Note">📝</div>
                         <div class="activity-status" onclick="toggleActivity(${activity.id})">
                             ${isCompleted ? '✅' : '⭕️'}
                         </div>
@@ -982,6 +1282,39 @@
                 </div>
             `;
         }).join('');
+    }
+
+    function openNoteModal(activityId, activityName) {
+        currentEditingActivityId = activityId;
+        const todayKey = getDateKey(currentDate);
+        const activity = appData.activities.find(a => a.id === activityId);
+        const note = activity.notes[todayKey] || '';
+        
+        document.getElementById('activity-note-title').textContent = `Adding note for: ${activityName}`;
+        document.getElementById('activity-note-textarea').value = note;
+        document.getElementById('note-modal').classList.add('show');
+    }
+
+    function closeNoteModal() {
+        document.getElementById('note-modal').classList.remove('show');
+        currentEditingActivityId = null;
+    }
+
+    function saveActivityNote() {
+        if (!currentEditingActivityId) return;
+        
+        const todayKey = getDateKey(currentDate);
+        const activity = appData.activities.find(a => a.id === currentEditingActivityId);
+        const note = document.getElementById('activity-note-textarea').value.trim();
+        
+        if (!activity.notes[todayKey]) {
+            activity.notes[todayKey] = '';
+        }
+        
+        activity.notes[todayKey] = note;
+        saveData();
+        renderActivities();
+        closeNoteModal();
     }
 
     function toggleActivity(activityId) {
@@ -995,12 +1328,10 @@
         const idx = historyEntry.activities.indexOf(activityId);
         
         if (idx > -1) {
-            // Uncomplete
             historyEntry.activities.splice(idx, 1);
             historyEntry.points -= POINTS_PER_ACTIVITY;
             appData.totalPoints -= POINTS_PER_ACTIVITY;
         } else {
-            // Complete
             historyEntry.activities.push(activityId);
             historyEntry.points += POINTS_PER_ACTIVITY;
             appData.totalPoints += POINTS_PER_ACTIVITY;
@@ -1012,9 +1343,6 @@
 
     function deleteActivity(activityId) {
         if (confirm('Delete this activity?')) {
-            const activity = appData.activities.find(a => a.id === activityId);
-            
-            // Remove from all history entries
             Object.keys(appData.history).forEach(dateKey => {
                 const entry = appData.history[dateKey];
                 const idx = entry.activities.indexOf(activityId);
@@ -1070,12 +1398,22 @@
                 element.classList.add('unlocked');
             }
             
-            // Update countdown
             if (!isClaimed && !isUnlocked) {
                 const pointsNeeded = reward.points - appData.totalPoints;
-                document.getElementById(`countdown-${reward.id}`).textContent = `${pointsNeeded} pts to go`;
+                document.getElementById(`countdown-${reward.id}`).textContent = `${pointsNeeded} pts`;
             } else {
                 document.getElementById(`countdown-${reward.id}`).textContent = '';
+            }
+        });
+    }
+
+    function updateBadges() {
+        BADGES.forEach(badge => {
+            const element = document.getElementById(`badge-${badge.id}`);
+            if (badge.condition()) {
+                element.classList.add('earned');
+            } else {
+                element.classList.remove('earned');
             }
         });
     }
@@ -1093,7 +1431,6 @@
                 points: reward.points
             });
             
-            // Reset points
             appData.totalPoints -= reward.points;
             
             saveData();
