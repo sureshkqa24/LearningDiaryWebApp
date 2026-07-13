@@ -470,6 +470,13 @@
     const STORAGE_KEY = 'learning_diary_data';
     const POINTS_PER_ACTIVITY = 10;
 
+    const DEFAULT_ACTIVITIES = [
+        '📚 Reading a Book',
+        '✍️ Writing a Paragraph',
+        '🏃 Exercise for 30 mins',
+        '👨‍👩‍👧 Helping Parents in Daily Routine'
+    ];
+
     const REWARDS = [
         { id: 1, name: 'Chocolate', icon: '🍫', points: 50 },
         { id: 2, name: 'Ice Cream', icon: '🍦', points: 100 },
@@ -525,7 +532,11 @@
         }
 
         appData.childName = name;
-        appData.activities = [];
+        appData.activities = DEFAULT_ACTIVITIES.map((activityName, index) => ({
+            id: index + 1,
+            name: activityName,
+            completed: false
+        }));
         appData.completedToday = [];
         appData.totalPoints = 0;
         appData.history = {};
