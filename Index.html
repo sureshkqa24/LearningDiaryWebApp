@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Learning Diary</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Learning Diary">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Learning%20Diary%22,%22short_name%22:%22Diary%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f4f6f9%22,%22theme_color%22:%22%236c5ce7%22}">
+
+    <style>
+        :root {
+            --bg-primary: #f4f6f9;
+            --tab-aradhya: #ff7675;
+            --tab-shiv: #74b9ff;
+            --text-dark: #2d3436;
+            --card-bg: #ffffff;
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #dfe6e9;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            background: #dfe6e9;
+            color: #636e72;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active[data-child="aradhya"] { background: var(--tab-aradhya); color: white; }
+        .tab-btn.active[data-child="shiv"] { background: var(--tab-shiv); color: white; }
+
+        .date-navigator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f2f6;
+            padding: 10px 15px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .date-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: #f9f9f9;
+            border: 1px solid #edf0f2;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            border: 2px solid #edf0f2;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s ease, border-color 0.2s;
+        }
+
+        .activity-item:active { transform: scale(0.98); }
+        .activity-item.completed { border-color: #2ecc71; background: #f4fbf7; }
+
+        .stamp-indicator {
+            font-size: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .completed .stamp-indicator {
+            opacity: 1;
+            animation: stamp-slam 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes stamp-slam {
+            0% { transform: scale(2.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .chart-box {
+            background: #f9f9f9;
+            border: 1px solid #edf0f2;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 25px;
+        }
+        .chart-title {
+            font-size: 0.9rem;
+            color: #636e72;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .bar-graph {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 100px;
+            padding: 0 10px;
+        }
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .bar-pillar {
+            width: 24px;
+            background-color: #ddd;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s ease, background-color 0.3s;
+            height: 0px;
+        }
+        .bar-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-top: 6px;
+        }
+
+        .edit-section {
+            border-top: 1px dashed #ccc;
+            padding-top: 15px;
+            margin-top: 25px;
+        }
+
+        .edit-toggle-btn {
+            width: 100%;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .edit-panel {
+            display: none;
+            margin-top: 15px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .edit-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .edit-input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .edit-input-group button {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .manage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .del-btn {
+            background: #ff7675;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="tabs">
+        <button class="tab-btn active" data-child="aradhya" onclick="switchChild('aradhya')">Aradhya (7)</button>
+        <button class="tab-btn" data-child="shiv" onclick="switchChild('shiv')">Shiv (3)</button>
+    </div>
+
+    <div class="date-navigator">
+        <button class="date-btn" onclick="changeDate(-1)">◀</button>
+        <span id="current-date-display">Today</span>
+        <button class="date-btn" onclick="changeDate(1)">▶</button>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div style="font-size: 0.8rem; color: #636e72;">Current Streak 🔥</div>
+            <div class="stat-val" id="streak-count">0 Days</div>
+        </div>
+        <div class="stat-card">
+            <div style="font-size: 0.8rem; color: #636e72;">Task Score</div>
+            <div class="stat-val" id="completion-ratio">0/0</div>
+        </div>
+    </div>
+
+    <div class="activity-list" id="activities-container"></div>
+
+    <div class="chart-box">
+        <div class="chart-title">Progress Last 7 Days</div>
+        <div class="bar-graph" id="bar-graph-container"></div>
+    </div>
+
+    <div class="edit-section">
+        <button class="edit-toggle-btn" onclick="toggleEditPanel()">⚙️ Edit Activities</button>
+        <div class="edit-panel" id="edit-panel">
+            <h4 style="margin-top: 0; margin-bottom: 10px;">Manage <span id="edit-child-name">Aradhya</span>'s List</h4>
+            <div class="edit-input-group">
+                <input type="text" id="new-activity-input" placeholder="Add new task...">
+                <button onclick="addNewActivity()">Add</button>
+            </div>
+            <div id="manage-list-container"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let defaultActivities = {
+        aradhya: ["Reading Books 📚", "Writing Letters ✍️", "Counting Math 🔢", "Drawing & Sketching 🎨"],
+        shiv: ["Learning Colours 🔴", "ABCs Practice 🔤", "Story Time 📖", "Building Blocks 🧱"]
+    };
+
+    let currentChild = 'aradhya';
+    let currentDate = new Date();
+    let appData = {
+        activities: JSON.parse(localStorage.getItem('ld_activities')) || defaultActivities,
+        history: JSON.parse(localStorage.getItem('ld_history')) || {} 
+    };
+
+    function getFormatDateKey(d) {
+        return d.toISOString().split('T')[0];
+    }
+
+    function init() {
+        renderDate();
+        renderActivities();
+        calculateStreak();
+        renderChart();
+    }
+
+    function switchChild(child) {
+        currentChild = child;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.tab-btn[data-child="${child}"]`).classList.add('active');
+        document.getElementById('edit-panel').style.display = 'none';
+        renderActivities();
+        calculateStreak();
+        renderChart();
+    }
+
+    function renderDate() {
+        const todayStr = getFormatDateKey(new Date());
+        const activeStr = getFormatDateKey(currentDate);
+        if (todayStr === activeStr) {
+            document.getElementById('current-date-display').innerText = "⭐️ Today ⭐️";
+        } else {
+            document.getElementById('current-date-display').innerText = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+        }
+    }
+
+    function changeDate(days) {
+        currentDate.setDate(currentDate.getDate() + days);
+        renderDate();
+        renderActivities();
+    }
+
+    function renderActivities() {
+        const container = document.getElementById('activities-container');
+        container.innerHTML = '';
+        const dateKey = getFormatDateKey(currentDate);
+        const childList = appData.activities[currentChild] || [];
+        
+        if(!appData.history[dateKey]) appData.history[dateKey] = {};
+        if(!appData.history[dateKey][currentChild]) appData.history[dateKey][currentChild] = [];
+
+        let completedItems = appData.history[dateKey][currentChild];
+        let doneCount = 0;
+
+        childList.forEach(act => {
+            const isDone = completedItems.includes(act);
+            if(isDone) doneCount++;
+
+            const div = document.createElement('div');
+            div.className = `activity-item ${isDone ? 'completed' : ''}`;
+            div.onclick = () => toggleActivityComplete(act);
+            div.innerHTML = `<span>${act}</span><span class="stamp-indicator">${isDone ? '✅' : '⭕️'}</span>`;
+            container.appendChild(div);
+        });
+
+        document.getElementById('completion-ratio').innerText = `${doneCount}/${childList.length}`;
+    }
+
+    function toggleActivityComplete(activityText) {
+        const dateKey = getFormatDateKey(currentDate);
+        let completedItems = appData.history[dateKey][currentChild];
+        const idx = completedItems.indexOf(activityText);
+        
+        if(idx > -1) completedItems.splice(idx, 1);
+        else completedItems.push(activityText);
+        
+        saveToLocalStorage();
+        renderActivities();
+        calculateStreak();
+        renderChart();
+    }
+
+    function calculateStreak() {
+        let streak = 0;
+        let checkDate = new Date();
+        while (true) {
+            const dateKey = getFormatDateKey(checkDate);
+            const childTasks = appData.activities[currentChild] || [];
+            if(childTasks.length === 0) break;
+            const logs = appData.history[dateKey]?.[currentChild] || [];
+            const allDone = childTasks.every(t => logs.includes(t));
+            
+            if (allDone && childTasks.length > 0) {
+                streak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else {
+                if(dateKey === getFormatDateKey(new Date())) {
+                    checkDate.setDate(checkDate.getDate() - 1);
+                    continue;
+                }
+                break;
+            }
+        }
+        document.getElementById('streak-count').innerText = `${streak} Day${streak !== 1 ? 's' : ''}`;
+    }
+
+    function renderChart() {
+        const container = document.getElementById('bar-graph-container');
+        container.innerHTML = '';
+        const themeColor = currentChild === 'aradhya' ? 'var(--tab-aradhya)' : 'var(--tab-shiv)';
+
+        for(let i = 6; i >= 0; i--) {
+            let d = new Date();
+            d.setDate(d.getDate() - i);
+            const dayLabel = d.toLocaleDateString('en-US', { weekday: 'narrow' });
+            
+            const key = getFormatDateKey(d);
+            const totalTasks = appData.activities[currentChild]?.length || 0;
+            const completedCount = appData.history[key]?.[currentChild]?.length || 0;
+            let percentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
+
+            const col = document.createElement('div');
+            col.className = 'bar-col';
+            col.innerHTML = `
+                <div class="bar-pillar" style="height: ${percentage}px; background-color: ${percentage > 0 ? themeColor : '#ddd'}"></div>
+                <div class="bar-label">${dayLabel}</div>
+            `;
+            container.appendChild(col);
+        }
+    }
+
+    function toggleEditPanel() {
+        const panel = document.getElementById('edit-panel');
+        if(panel.style.display === 'none' || !panel.style.display) {
+            panel.style.display = 'block';
+            document.getElementById('edit-child-name').innerText = currentChild.charAt(0).toUpperCase() + currentChild.slice(1);
+            renderManageList();
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    function renderManageList() {
+        const listContainer = document.getElementById('manage-list-container');
+        listContainer.innerHTML = '';
+        (appData.activities[currentChild] || []).forEach((act, index) => {
+            const row = document.createElement('div');
+            row.className = 'manage-item';
+            row.innerHTML = `<span>${act}</span><button class="del-btn" onclick="removeActivity(${index})">Delete</button>`;
+            listContainer.appendChild(row);
+        });
+    }
+
+    function addNewActivity() {
+        const input = document.getElementById('new-activity-input');
+        const text = input.value.trim();
+        if(text) {
+            appData.activities[currentChild].push(text);
+            input.value = '';
+            saveToLocalStorage();
+            renderManageList();
+            renderActivities();
+            calculateStreak();
+            renderChart();
+        }
+    }
+
+    function removeActivity(index) {
+        appData.activities[currentChild].splice(index, 1);
+        saveToLocalStorage();
+        renderManageList();
+        renderActivities();
+        calculateStreak();
+        renderChart();
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('ld_activities', JSON.stringify(appData.activities));
+        localStorage.setItem('ld_history', JSON.stringify(appData.history));
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
